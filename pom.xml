@@ -87,6 +87,9 @@
 					<compilerPlugins>
 						<plugin>spring</plugin>
 					</compilerPlugins>
+					<args>
+						<arg>-Xjsr305=strict</arg>
+					</args>
 					<jvmTarget>${java.version}</jvmTarget>
 				</configuration>
 				<executions>
