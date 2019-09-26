@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+
+  invillia-db:
+    image: mysql:5.7
+    container_name: "invillia-db"
+    restart: always
+    environment:
+      MYSQL_DATABASE: invilliadb
+      MYSQL_USER: mysql
+      MYSQL_PASSWORD: admin
+      MYSQL_ROOT_PASSWORD: admin
+    ports:
+      - "3306:3306"
+    volumes:
+      - invillia-db-data:/var/lib/mysql
+
+volumes:
+  invillia-db-data:
