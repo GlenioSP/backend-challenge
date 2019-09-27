@@ -13,7 +13,7 @@ class Order(
         @Column(name = "confirmation_date")
         val confirmationDate: LocalDateTime,
         @Enumerated(EnumType.STRING)
-        val status: OrderStatus,
+        var status: OrderStatus,
         @OneToOne
         @JoinColumn(name = "addresses_id")
         val address: Address,
@@ -21,7 +21,9 @@ class Order(
         @JoinColumn(name = "stores_id")
         val store: Store,
         @OneToMany(mappedBy = "order", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
-        var orderItems: List<OrderItem> = emptyList()
+        var orderItems: List<OrderItem> = emptyList(),
+        @OneToOne(mappedBy = "order", orphanRemoval = true)
+        var payment: Payment? = null
 ) {
     fun toOrderQuery(): OrderQuery = OrderQuery(
             id = this.id,
@@ -30,4 +32,13 @@ class Order(
             address = this.address.toDto(),
             store = this.store.toDto(),
             orderItems = this.orderItems.map { it.toOrderItemQuery() })
+
+    companion object {
+        fun fromOrderQuery(orderQuery: OrderQuery) = Order(
+                id = orderQuery.id,
+                confirmationDate = orderQuery.confirmationDate,
+                status = orderQuery.status,
+                address = Address.fromDto(orderQuery.address),
+                store = Store.fromDto(orderQuery.store))
+    }
 }

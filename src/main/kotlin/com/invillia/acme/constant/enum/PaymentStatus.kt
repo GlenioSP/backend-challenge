@@ -1,5 +1,5 @@
 package com.invillia.acme.constant.enum
 
 enum class PaymentStatus {
-    PENDING, REFUND, PAID
+    PENDING, REFUND, ACCEPTED
 }

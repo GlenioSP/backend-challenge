@@ -24,7 +24,8 @@ class OrderServiceImpl(private val orderRepository: OrderRepository,
                        private val storeService: StoreService) : OrderService {
 
     override fun findOne(id: Long): OrderQuery? {
-        return orderRepository.findByIdOrNull(id)?.toOrderQuery() ?: throw EntityNotFoundException("$ENTITY_NOT_FOUND$id")
+        return orderRepository.findByIdOrNull(id)?.toOrderQuery()
+                ?: throw EntityNotFoundException("$ENTITY_NOT_FOUND$id")
     }
 
     override fun create(createOrderCommand: CreateOrderCommand): OrderQuery {

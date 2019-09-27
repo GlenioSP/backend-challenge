@@ -21,12 +21,19 @@ class GlobalExceptionHandler {
         val errorDetails: ErrorDetails = ErrorDetails(LocalDateTime.now(), e.msg, req.getDescription(false))
         return ResponseEntity(errorDetails, HttpStatus.NOT_FOUND)
     }
+
+    @ExceptionHandler(value = [CommandBadRequest::class])
+    fun handleCommandBadRequest(e: CommandBadRequest, req: WebRequest): ResponseEntity<ErrorDetails> {
+        logger.error("A CommandBadRequest was raised: ", e)
+        val errorDetails: ErrorDetails = ErrorDetails(LocalDateTime.now(), e.msg, req.getDescription(false))
+        return ResponseEntity(errorDetails, HttpStatus.BAD_REQUEST)
+    }
 }
 
 class ErrorDetails(@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
                    val timestamp: LocalDateTime,
                    val message: String, val details: String)
 
-class EntityConflictException(val msg: String) : BaseException(msg)
+class CommandBadRequest(val msg: String) : BaseException(msg)
 
 class EntityNotFoundException(val msg: String) : BaseException(msg)

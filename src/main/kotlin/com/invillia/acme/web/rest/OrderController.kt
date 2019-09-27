@@ -23,10 +23,10 @@ class OrderController(private val orderService: OrderService) {
 
     @PostMapping(produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun create(b: UriComponentsBuilder, @Valid @RequestBody createOrderCommand: CreateOrderCommand): ResponseEntity<OrderQuery> {
-        val createdOrderQuery: OrderQuery = orderService.create(createOrderCommand)
-        val uriComponents: UriComponents = b.path("/api/order/{id}").buildAndExpand(createdOrderQuery.id)
+        val orderQuery: OrderQuery = orderService.create(createOrderCommand)
+        val uriComponents: UriComponents = b.path("/api/order/{id}").buildAndExpand(orderQuery.id)
         val headers = HttpHeaders()
         headers.location = uriComponents.toUri()
-        return ResponseEntity(createdOrderQuery, headers, HttpStatus.CREATED)
+        return ResponseEntity(orderQuery, headers, HttpStatus.CREATED)
     }
 }
