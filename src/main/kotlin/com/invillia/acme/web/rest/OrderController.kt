@@ -2,7 +2,9 @@ package com.invillia.acme.web.rest
 
 import com.invillia.acme.service.OrderService
 import com.invillia.acme.service.dto.command.CreateOrderCommand
+import com.invillia.acme.service.dto.command.RefundOrderCommand
 import com.invillia.acme.service.dto.query.OrderQuery
+import com.invillia.acme.service.dto.query.RefundOrderQuery
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -28,5 +30,10 @@ class OrderController(private val orderService: OrderService) {
         val headers = HttpHeaders()
         headers.location = uriComponents.toUri()
         return ResponseEntity(orderQuery, headers, HttpStatus.CREATED)
+    }
+
+    @PostMapping(value = ["/refund"], produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun refundOrder(@Valid @RequestBody refundOrderCommand: RefundOrderCommand): ResponseEntity<RefundOrderQuery> {
+        return ResponseEntity(orderService.refundOrder(refundOrderCommand), HttpStatus.OK)
     }
 }

@@ -1,8 +1,6 @@
 package com.invillia.acme.service.impl
 
-import com.invillia.acme.constant.CREDIT_CARD_NUMBER_BAD_FORMATTED
-import com.invillia.acme.constant.ENTITY_NOT_FOUND
-import com.invillia.acme.constant.ORDER_MUST_EXIST_FOR_PAYMENT
+import com.invillia.acme.constant.*
 import com.invillia.acme.constant.enum.OrderStatus
 import com.invillia.acme.constant.enum.PaymentStatus
 import com.invillia.acme.domain.Payment
@@ -33,15 +31,21 @@ class PaymentServiceImpl(val paymentRepository: PaymentRepository,
         DataSecurityUtils.verifyCreditCardNumber(createOrderPaymentCommand.cardNumber)
                 ?: throw CommandBadRequest(CREDIT_CARD_NUMBER_BAD_FORMATTED)
 
-        val payment = Payment(null, LocalDateTime.now(), PaymentStatus.PENDING, createOrderPaymentCommand.cardNumber, order)
-
-        return paymentRepository.save(payment).toOrderPaymentQuery()
+        if (order.status == OrderStatus.PAYMENT_PENDING) {
+            val payment = Payment(null, LocalDateTime.now(), PaymentStatus.PENDING, createOrderPaymentCommand.cardNumber, order)
+            return paymentRepository.save(payment).toOrderPaymentQuery()
+        }
+        throw CommandBadRequest(ORDER_MUST_BE_WITH_PAYMENT_PENDING_TO_BE_PAID)
     }
 
     override fun confirm(id: Long): OrderPaymentQuery {
         val payment = paymentRepository.findByIdOrNull(id) ?: throw EntityNotFoundException("$ENTITY_NOT_FOUND$id")
-        payment.status = PaymentStatus.ACCEPTED
-        payment.order.status = OrderStatus.PAID
-        return paymentRepository.save(payment).toOrderPaymentQuery()
+
+        if (payment.status == PaymentStatus.PENDING) {
+            payment.status = PaymentStatus.ACCEPTED
+            payment.order.status = OrderStatus.PAID
+            return paymentRepository.save(payment).toOrderPaymentQuery()
+        }
+        throw CommandBadRequest(PAYMENT_MUST_BE_IN_PENDING_STATE_TO_BE_CONFIRMED)
     }
 }

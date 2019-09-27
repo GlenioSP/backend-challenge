@@ -2,7 +2,6 @@ package com.invillia.acme.domain
 
 import com.invillia.acme.constant.enum.PaymentStatus
 import com.invillia.acme.service.dto.query.OrderPaymentQuery
-import com.invillia.acme.service.dto.query.OrderQuery
 import com.invillia.acme.utils.DataSecurityUtils
 import java.time.LocalDateTime
 import javax.persistence.*
