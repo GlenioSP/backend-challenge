@@ -1,3 +1,38 @@
+# My considerations
+
+- Tasks developed:
+* Create a **Store** -- OK
+* Update a **Store** information -- OK
+* Retrieve a **Store** by parameters -- OK
+* Create an **Order** with items -- OK
+* Create a **Payment** for an **Order** -- OK
+* Retrieve an **Order** by parameters -- The method to retrieve is created but I couldn't finish it. I would create a OrderSpecification (JPA) and do the same methodology as I did for the Store domain.
+* Refund **Order** or any **Order Item** -- OK (there is a minor bug when the created Refund is returned to the client. To fulfill the deadline I created a simply refund table with no relationships and I simply save the orderId and a list of OrderItemIds to refund. The JSON returned doesn't show the list correctly, but the Order and Payment Status are changed correctly).
+
+* Asynchronous processing -> At first I tried to use Spring WebFlux with Kotlin coroutines, but it got a bit messy so I used the old MVC.
+* Database -> Done.
+* Docker -> Done. 
+* AWS -> I didn't have time. I would use Terraform to create a ECS Cluster and RDS, then deploy the app using containers.
+* Security -> I would do like [that](https://auth0.com/blog/developing-restful-apis-with-kotlin/). Using JWT authentication.
+* Swagger -> I didn't have time. I would do as I did in my [springboot-seed-api](https://github.com/GlenioSP/springboot-seed-api). I put a postman_collection file in the project's root folder...better than nothing...
+* Clean Code -> I did my best
+* (Extra) Tests: I didn't have time. I've configured the app to use JUnit 5 and MockK. I would do something link [that](https://github.com/spring-guides/tut-spring-boot-kotlin)
+
+Obs.: for consideration, being a MVP for a microservices application, if I have enough time I would create three services, one for each domain (Order, Payment and Store). Each one would be an Aggregate (as in DDD). Then, I would use Axon Framework (helping with Event Sourcing and CQRS) to create the services. Spring Cloud with Circuit Break could help. The best scenario would be a deploy within Kubernetes with some service mesh, like Istio. But, I bit overkill for now...
+
+### Run the app
+
+- mvn clean install
+
+- docker build -t api .
+
+- docker run -p 8080:8080 api
+
+- docker-compose up -d (to run MySQL container)
+
+Obs.: I didn't have time to put the api docker image inside docker-compose.  
+
+------------------------------------------------------------------------------
 # Invillia recruitment challenge
 
 [![Build Status](https://travis-ci.org/shelsonjava/invillia.svg?branch=master)](https://travis-ci.org/shelsonjava/invillia)
