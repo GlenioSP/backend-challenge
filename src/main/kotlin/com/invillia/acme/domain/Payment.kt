@@ -16,6 +16,6 @@ class Payment(
         @Column(name = "card_number", columnDefinition = "char")
         val cardNumber: String,
         @OneToOne
-        @JoinColumn(name="orders_id")
+        @JoinColumn(name = "orders_id")
         val order: Order
 )

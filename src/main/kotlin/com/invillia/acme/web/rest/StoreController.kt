@@ -1,5 +1,7 @@
 package com.invillia.acme.web.rest
 
+import com.invillia.acme.constant.ENTITY_NOT_FOUND
+import com.invillia.acme.exception.EntityNotFoundException
 import com.invillia.acme.service.StoreService
 import com.invillia.acme.service.dto.SearchStoreDTO
 import com.invillia.acme.service.dto.StoreDTO
@@ -26,7 +28,8 @@ class StoreController(private val storeService: StoreService) {
 
     @GetMapping(value = ["/{id}"], produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun findOne(@PathVariable id: Long): ResponseEntity<StoreDTO> {
-        return ResponseEntity(storeService.findOne(id), HttpStatus.OK)
+        val storeDTO: StoreDTO = storeService.findOne(id) ?: throw EntityNotFoundException("$ENTITY_NOT_FOUND$id")
+        return ResponseEntity(storeDTO, HttpStatus.OK)
     }
 
     @PostMapping(produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])

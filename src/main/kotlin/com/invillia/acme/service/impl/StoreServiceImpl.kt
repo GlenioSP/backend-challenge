@@ -29,9 +29,9 @@ class StoreServiceImpl(private val storeRepository: StoreRepository,
     }
 
     @Transactional(readOnly = true)
-    override fun findOne(id: Long): StoreDTO {
+    override fun findOne(id: Long): StoreDTO? {
         logger.debug("Request to find store with id {}", id)
-        return storeRepository.findByIdOrNull(id)?.toDto() ?: throw EntityNotFoundException("$ENTITY_NOT_FOUND$id")
+        return storeRepository.findByIdOrNull(id)?.toDto()
     }
 
     @Transactional
@@ -49,24 +49,24 @@ class StoreServiceImpl(private val storeRepository: StoreRepository,
 
     override fun update(id: Long, storeDTO: StoreDTO): StoreDTO {
         logger.debug("Request to update store with id {}", id)
-        findOne(id)
+        findOne(id) ?: throw EntityNotFoundException("$ENTITY_NOT_FOUND$id")
         storeDTO.id = id
         return storeRepository.save(Store.fromDto(storeDTO)).toDto()
     }
 
     override fun search(searchStoreDTO: SearchStoreDTO): List<StoreDTO> {
-       if (searchStoreDTO.name != null) {
-           val store = storeRepository.findByName(searchStoreDTO.name) ?: throw EntityNotFoundException(NO_STORE_WAS_FOUND)
-           val addresses = addressService.search(searchStoreDTO.street, searchStoreDTO.city, searchStoreDTO.state, searchStoreDTO.zipCode, searchStoreDTO.number)
-           if (addresses.isNotEmpty()) {
-               val address = addresses.firstOrNull { store.addressId == it.id  }
-               address ?: throw EntityNotFoundException(NO_STORE_WAS_FOUND)
-           }
-           return listOf(store.toDto())
-       } else {
-           val addresses = addressService.search(searchStoreDTO.street, searchStoreDTO.city, searchStoreDTO.state, searchStoreDTO.zipCode, searchStoreDTO.number)
-           val stores = addresses.map { storeRepository.findByAddressId(it.id!!) }
-           return stores.filterNotNull().map { it.toDto() }
-       }
+        if (searchStoreDTO.name != null) {
+            val store = storeRepository.findByName(searchStoreDTO.name)
+                    ?: throw EntityNotFoundException(NO_STORE_WAS_FOUND)
+            val addresses = addressService.search(searchStoreDTO.street, searchStoreDTO.city, searchStoreDTO.state, searchStoreDTO.zipCode, searchStoreDTO.number)
+            if (addresses.isNotEmpty()) {
+                val address = addresses.firstOrNull { store.addressId == it.id }
+                address ?: throw EntityNotFoundException(NO_STORE_WAS_FOUND)
+            }
+            return listOf(store.toDto())
+        }
+        val addresses = addressService.search(searchStoreDTO.street, searchStoreDTO.city, searchStoreDTO.state, searchStoreDTO.zipCode, searchStoreDTO.number)
+        val stores = addresses.map { storeRepository.findByAddressId(it.id!!) }
+        return stores.filterNotNull().map { it.toDto() }
     }
 }

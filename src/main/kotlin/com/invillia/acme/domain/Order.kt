@@ -1,6 +1,7 @@
 package com.invillia.acme.domain
 
 import com.invillia.acme.constant.enum.OrderStatus
+import com.invillia.acme.service.dto.query.OrderQuery
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -14,9 +15,19 @@ class Order(
         @Enumerated(EnumType.STRING)
         val status: OrderStatus,
         @OneToOne
-        @JoinColumn(name="addresses_id")
+        @JoinColumn(name = "addresses_id")
         val address: Address,
         @OneToOne
-        @JoinColumn(name="stores_id")
-        val store: Store
-)
+        @JoinColumn(name = "stores_id")
+        val store: Store,
+        @OneToMany(mappedBy = "order", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
+        var orderItems: List<OrderItem> = emptyList()
+) {
+    fun toOrderQuery(): OrderQuery = OrderQuery(
+            id = this.id,
+            confirmationDate = this.confirmationDate,
+            status = this.status,
+            address = this.address.toDto(),
+            store = this.store.toDto(),
+            orderItems = this.orderItems.map { it.toOrderItemQuery() })
+}

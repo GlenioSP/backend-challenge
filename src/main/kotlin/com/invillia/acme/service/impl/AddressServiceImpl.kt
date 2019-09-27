@@ -12,7 +12,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
-class AddressServiceImpl(private val addressRepository: AddressRepository): AddressService {
+class AddressServiceImpl(private val addressRepository: AddressRepository) : AddressService {
 
     override fun findOne(id: Long): AddressDTO? {
         return addressRepository.findByIdOrNull(id)?.toDto()

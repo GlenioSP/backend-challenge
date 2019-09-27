@@ -9,7 +9,7 @@ interface StoreService {
 
     fun findAll(pageable: Pageable): Page<StoreDTO>
 
-    fun findOne(id: Long): StoreDTO
+    fun findOne(id: Long): StoreDTO?
 
     fun create(storeDTO: StoreDTO): StoreDTO
 

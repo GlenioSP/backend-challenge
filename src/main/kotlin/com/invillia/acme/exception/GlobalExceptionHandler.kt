@@ -1,5 +1,6 @@
 package com.invillia.acme.exception
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -22,7 +23,9 @@ class GlobalExceptionHandler {
     }
 }
 
-class ErrorDetails(val timestamp: LocalDateTime, val message: String, val details: String)
+class ErrorDetails(@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+                   val timestamp: LocalDateTime,
+                   val message: String, val details: String)
 
 class EntityConflictException(val msg: String) : BaseException(msg)
 
