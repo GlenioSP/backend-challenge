@@ -4,8 +4,10 @@ import com.invillia.acme.constant.ADDRESS_ALREADY_EXISTS
 import com.invillia.acme.constant.ENTITY_MUST_HAVE_NULL_ID
 import com.invillia.acme.domain.Address
 import com.invillia.acme.repository.AddressRepository
+import com.invillia.acme.repository.specification.AddressSpecification
 import com.invillia.acme.service.AddressService
 import com.invillia.acme.service.dto.AddressDTO
+import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
@@ -32,5 +34,11 @@ class AddressServiceImpl(private val addressRepository: AddressRepository): Addr
             throw Exception(ADDRESS_ALREADY_EXISTS)
         }
         return addressRepository.save(Address.fromDto(addressDTO)).toDto()
+    }
+
+    override fun search(street: String?, city: String?, state: String?, zipCode: String?, number: Short?): List<AddressDTO> {
+        val addressSpecification = AddressSpecification()
+        val specs: Specification<Address> = addressSpecification.addressContains(street, city, state, zipCode, number)
+        return addressRepository.findAll(specs).map { it.toDto() }
     }
 }

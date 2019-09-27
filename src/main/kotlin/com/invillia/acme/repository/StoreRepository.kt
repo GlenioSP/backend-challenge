@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository
 interface StoreRepository : JpaRepository<Store, Long> {
 
     fun findByName(name: String) : Store?
+
+    fun findByAddressId(addressId: Long): Store?
 }

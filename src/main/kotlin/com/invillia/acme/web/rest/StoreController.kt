@@ -1,6 +1,7 @@
 package com.invillia.acme.web.rest
 
 import com.invillia.acme.service.StoreService
+import com.invillia.acme.service.dto.SearchStoreDTO
 import com.invillia.acme.service.dto.StoreDTO
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -23,6 +24,11 @@ class StoreController(private val storeService: StoreService) {
         return ResponseEntity(page.content, HttpStatus.OK)
     }
 
+    @GetMapping(value = ["/{id}"], produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun findOne(@PathVariable id: Long): ResponseEntity<StoreDTO> {
+        return ResponseEntity(storeService.findOne(id), HttpStatus.OK)
+    }
+
     @PostMapping(produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
     fun create(b: UriComponentsBuilder, @Valid @RequestBody storeDTO: StoreDTO): ResponseEntity<StoreDTO> {
         val createdStoreDTO: StoreDTO = storeService.create(storeDTO)
@@ -30,5 +36,15 @@ class StoreController(private val storeService: StoreService) {
         val headers = HttpHeaders()
         headers.location = uriComponents.toUri()
         return ResponseEntity(createdStoreDTO, headers, HttpStatus.CREATED)
+    }
+
+    @PutMapping(value = ["/{id}"], produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun update(@PathVariable id: Long, @Valid @RequestBody storeDTO: StoreDTO): ResponseEntity<StoreDTO> {
+        return ResponseEntity(storeService.update(id, storeDTO), HttpStatus.OK)
+    }
+
+    @PostMapping(value = ["/search"], produces = [MediaType.APPLICATION_JSON_UTF8_VALUE])
+    fun search(@Valid @RequestBody searchStoreDTO: SearchStoreDTO): ResponseEntity<List<StoreDTO>> {
+        return ResponseEntity(storeService.search(searchStoreDTO), HttpStatus.OK)
     }
 }
