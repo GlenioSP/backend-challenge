@@ -4,6 +4,7 @@ import com.invillia.acme.constant.ENTITY_MUST_HAVE_NULL_ID
 import com.invillia.acme.constant.STORE_MUST_HAVE_VALID_ADDRESS
 import com.invillia.acme.constant.STORE_NAME_ALREADY_EXISTS
 import com.invillia.acme.domain.Store
+import com.invillia.acme.exception.EntityNotFoundException
 import com.invillia.acme.repository.StoreRepository
 import com.invillia.acme.service.AddressService
 import com.invillia.acme.service.StoreService
@@ -36,7 +37,7 @@ class StoreServiceImpl(private val storeRepository: StoreRepository,
         if (storeRepository.findByName(storeDTO.name) != null) {
             throw Exception(STORE_NAME_ALREADY_EXISTS)
         }
-        addressService.findOne(storeDTO.addressId) ?: throw Exception(STORE_MUST_HAVE_VALID_ADDRESS)
+        addressService.findOne(storeDTO.addressId) ?: throw EntityNotFoundException(STORE_MUST_HAVE_VALID_ADDRESS)
         return storeRepository.save(Store.fromDto(storeDTO)).toDto()
     }
 }
