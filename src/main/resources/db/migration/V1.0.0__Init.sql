@@ -11,7 +11,7 @@ CREATE TABLE addresses (
 CREATE TABLE stores (
   id bigint(20) NOT NULL AUTO_INCREMENT,
   name varchar(50) NOT NULL,
-  addresses_id bigint(20),
+  addresses_id bigint(20) NOT NULL,
   PRIMARY KEY (id),
   CONSTRAINT fk_addresses
   FOREIGN KEY (addresses_id)
